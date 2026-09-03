@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Rocco Antoniou — Electrical & Computer Engineering student at the University of Colorado Boulder." />
+  <meta name="theme-color" content="#3d4453" />
+  <title>Rocco Antoniou</title>
+  <link rel="preload" href="GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin />
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="topbar fx" id="topbar" style="--i: 3">
+    <nav class="topbar-right" aria-label="Contact">
+      <a href="mailto:roccoantoniou@gmail.com">roccoantoniou@gmail.com</a>
+      <a href="https://github.com/roccoagain" target="_blank" rel="noopener noreferrer">github.com/roccoagain</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="backdrop" aria-hidden="true">
+      <img
+        class="backdrop-img"
+        id="backdrop-img"
+        src="bg-2400.jpg"
+        srcset="bg-1600.jpg 1600w, bg-2400.jpg 2400w"
+        sizes="100vw"
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+      />
+      <div class="backdrop-shade"></div>
+    </div>
+
+    <div class="hero-inner">
+      <h1 class="title fx" style="--i: 0">Rocco Antoniou</h1>
+
+      <ol class="index" aria-label="Contents">
+        <li class="index-row fx" style="--i: 1">
+          <a class="index-link" href="#activity">
+            <span class="index-number">[1]</span>
+            <span class="index-leader" aria-hidden="true"></span>
+            <span class="index-label">Activity</span>
+          </a>
+        </li>
+      </ol>
+    </div>
+
+    <div class="strip fx" style="--i: 2">
+      <span class="strip-left">© 2026 · Photo by me</span>
+      <a class="strip-right" href="#about" aria-label="Scroll to content">
+        Scroll
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="none" aria-hidden="true"><path d="M5 1v10M1 7l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <main class="content">
+    <section class="intro reveal" id="about">
+      <p class="intro-text">I'm Rocco, an electrical and computer engineering student at the University of Colorado Boulder. I direct firmware and software for the CU Boulder Robotics Team, and I've interned at Thorlabs and MDScripts.</p>
+    </section>
+
+    <section class="block reveal" id="activity">
+      <h2 class="block-title"><span class="block-number">[1]</span> Activity</h2>
+      <p class="block-lede" id="contrib-lede">Loading the last year from GitHub…</p>
+      <div class="graph-wrap">
+        <div class="graph" id="contrib-graph" role="img" aria-label="GitHub contribution graph for the last year"></div>
+      </div>
+      <div class="graph-legend" aria-hidden="true">
+        <span>Less</span>
+        <i class="cell l0"></i><i class="cell l1"></i><i class="cell l2"></i><i class="cell l3"></i><i class="cell l4"></i>
+        <span>More</span>
+      </div>
+      <p class="block-lede is-mid" id="activity-lede">Loading recent public activity…</p>
+      <ul class="rows" id="activity-list"></ul>
+    </section>
+
+    <footer class="colophon">
+      <a href="#top">Back to top</a>
+      <span class="colophon-links">
+        <a href="https://www.linkedin.com/in/roccoantoniou" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/roccoagain" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <span>Rocco Antoniou · 2026</span>
+      </span>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var img = document.getElementById("backdrop-img");
+      var topbar = document.getElementById("topbar");
+      var hero = document.getElementById("top");
+
+      // hero reveal once the photo is ready (or after a short timeout)
+      function ready() { root.classList.add("is-ready"); }
+      if (img.complete && img.naturalWidth > 0) {
+        ready();
+      } else {
+        img.addEventListener("load", ready, { once: true });
+        img.addEventListener("error", ready, { once: true });
+        setTimeout(ready, 2500);
+      }
+
+      // top bar switches to light theme once the hero scrolls away
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          topbar.classList.toggle("is-light", !entries[0].isIntersecting);
+        }, { rootMargin: "-56px 0px 0px 0px", threshold: 0 }).observe(hero);
+
+        // content sections blur in as they enter the viewport
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-visible");
+              io.unobserve(e.target);
+            }
+          });
+        }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
+        document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+      } else {
+        document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-visible"); });
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var USER = "roccoagain";
+      var TTL = 10 * 60 * 1000;
+
+      function cached(key, url, fn) {
+        var k = "gh:" + key;
+        try {
+          var hit = JSON.parse(localStorage.getItem(k) || "null");
+          if (hit && Date.now() - hit.t < TTL) return Promise.resolve(hit.v).then(fn);
+        } catch (e) {}
+        return fetch(url).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.json();
+        }).then(function (v) {
+          try { localStorage.setItem(k, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {}
+          return fn(v);
+        });
+      }
+
+      function el(tag, cls, text) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text != null) e.textContent = text;
+        return e;
+      }
+
+      function ago(iso) {
+        var s = Math.max(1, (Date.now() - new Date(iso)) / 1000);
+        var u = [[60, "s"], [60, "m"], [24, "h"], [7, "d"], [4.35, "w"], [12, "mo"], [1e9, "y"]];
+        var n = s, i = 0;
+        while (i < u.length - 1 && n >= u[i][0]) { n = n / u[i][0]; i++; }
+        n = Math.floor(n);
+        return n + u[i][1] + " ago";
+      }
+
+      function fail(id, msg) {
+        var p = document.getElementById(id);
+        p.textContent = msg + " ";
+        var a = el("a", null, "github.com/" + USER);
+        a.href = "https://github.com/" + USER;
+        a.target = "_blank"; a.rel = "noopener noreferrer";
+        p.appendChild(a);
+      }
+
+      /* ── contributions ── */
+      cached("contrib", "https://github-contributions-api.jogruber.de/v4/" + USER + "?y=last", function (d) {
+        var days = d.contributions;
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        days = days.filter(function (c) { return new Date(c.date + "T00:00:00") <= today; });
+        var graph = document.getElementById("contrib-graph");
+        graph.innerHTML = "";
+
+        // pad so the first column starts on Sunday
+        var first = new Date(days[0].date + "T00:00:00");
+        for (var p = 0; p < first.getDay(); p++) graph.appendChild(el("i", "cell pad"));
+
+        var months = el("div", "graph-months");
+        var lastMonth = -1, col = 0;
+        days.forEach(function (c, i) {
+          var dt = new Date(c.date + "T00:00:00");
+          var cell = el("i", "cell l" + Math.min(4, c.level));
+          cell.title = c.count + (c.count === 1 ? " contribution" : " contributions") + " on " + dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+          graph.appendChild(cell);
+          var colIdx = Math.floor((i + first.getDay()) / 7);
+          if (dt.getDate() <= 7 && dt.getMonth() !== lastMonth && colIdx > 0) {
+            lastMonth = dt.getMonth();
+            var m = el("span", null, dt.toLocaleDateString(undefined, { month: "short" }));
+            m.style.gridColumnStart = colIdx + 1;
+            months.appendChild(m);
+          }
+        });
+        graph.parentNode.insertBefore(months, graph);
+        var wrap = graph.parentNode;
+        wrap.scrollLeft = wrap.scrollWidth;
+
+        var total = days.reduce(function (a, c) { return a + c.count; }, 0);
+        var streak = 0;
+        for (var i = days.length - 1; i >= 0 && days[i].count > 0; i--) streak++;
+        var best = days.reduce(function (a, c) { return c.count > a.count ? c : a; }, days[0]);
+        var lede = document.getElementById("contrib-lede");
+        lede.textContent = total.toLocaleString() + " contributions in the last year"
+          + (streak > 1 ? ", " + streak + " days running" : "")
+          + ". Busiest day was " + new Date(best.date + "T00:00:00").toLocaleDateString(undefined, { month: "long", day: "numeric" })
+          + " with " + best.count + ".";
+      }).catch(function () { fail("contrib-lede", "Couldn't load the graph right now. It lives at"); });
+
+      /* ── activity ── */
+      var ev1 = "https://api.github.com/users/" + USER + "/events/public?per_page=100";
+      cached("events", ev1, function (events) {
+        var verbs = {
+          PushEvent: function (e) { return "Pushed to"; },
+          PullRequestEvent: function (e) { return (e.payload.action === "closed" && e.payload.pull_request && e.payload.pull_request.merged ? "Merged" : e.payload.action === "opened" ? "Opened" : e.payload.action.charAt(0).toUpperCase() + e.payload.action.slice(1)) + " a pull request in"; },
+          IssuesEvent: function (e) { return (e.payload.action.charAt(0).toUpperCase() + e.payload.action.slice(1)) + " an issue in"; },
+          IssueCommentEvent: function () { return "Commented in"; },
+          PullRequestReviewEvent: function () { return "Reviewed a pull request in"; },
+          CreateEvent: function (e) { return e.payload.ref_type === "repository" ? "Created" : "Created a " + e.payload.ref_type + " in"; },
+          DeleteEvent: function (e) { return "Deleted a " + e.payload.ref_type + " in"; },
+          WatchEvent: function () { return "Starred"; },
+          ForkEvent: function () { return "Forked"; },
+          ReleaseEvent: function () { return "Published a release in"; }
+        };
+
+        // collapse runs of pushes to the same repo
+        var rows = [];
+        events.forEach(function (e) {
+          if (!verbs[e.type]) return;
+          var last = rows[rows.length - 1];
+          if (last && e.type === "PushEvent" && last.type === "PushEvent" && last.repo === e.repo.name) { last.n++; return; }
+          rows.push({ type: e.type, repo: e.repo.name, at: e.created_at, n: 1, verb: verbs[e.type](e) });
+        });
+
+        var list = document.getElementById("activity-list");
+        list.innerHTML = "";
+        rows.slice(0, 8).forEach(function (r) {
+          var li = el("li");
+          var name = el("span", "row-name");
+          name.appendChild(document.createTextNode((r.n > 1 ? "Pushed " + r.n + " times to" : r.verb) + " "));
+          var a = el("a", null, r.repo);
+          a.href = "https://github.com/" + r.repo; a.target = "_blank"; a.rel = "noopener noreferrer";
+          name.appendChild(a);
+          li.appendChild(name);
+          li.appendChild(el("span", "row-leader"));
+          li.appendChild(el("span", "row-when", ago(r.at)));
+          list.appendChild(li);
+        });
+
+        var lede = document.getElementById("activity-lede");
+        if (events.length) {
+          var repos = {};
+          events.forEach(function (e) { repos[e.repo.name] = 1; });
+          lede.textContent = "Last active " + ago(events[0].created_at) + ", across " + Object.keys(repos).length + " repositories.";
+        } else {
+          lede.textContent = "No public activity recently.";
+        }
+      }).catch(function () { fail("activity-lede", "Couldn't reach GitHub right now. Activity lives at"); });
+
+    })();
+  </script>
+</body>
+</html>
