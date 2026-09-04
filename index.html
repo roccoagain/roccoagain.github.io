@@ -8,14 +8,15 @@
   <title>Rocco Antoniou</title>
   <link rel="preload" href="GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin />
   <script>document.documentElement.classList.add("js");</script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 
 <body>
+  <a class="skip-link" href="#about">Skip to content</a>
   <header class="topbar fx" id="topbar" style="--i: 3">
     <nav class="topbar-right" aria-label="Contact">
       <a href="mailto:roccoantoniou@gmail.com">roccoantoniou@gmail.com</a>
-      <a href="https://github.com/roccoagain" target="_blank" rel="noopener noreferrer">github.com/roccoagain</a>
+      <a href="https://github.com/roccoagain" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </nav>
   </header>
 
@@ -35,14 +36,22 @@
     </div>
 
     <div class="hero-inner">
+      <p class="hero-eyebrow fx" style="--i: 0">Electrical &amp; Computer Engineering</p>
       <h1 class="title fx" style="--i: 0">Rocco Antoniou</h1>
 
       <ol class="index" aria-label="Contents">
         <li class="index-row fx" style="--i: 1">
+          <a class="index-link" href="#about">
+            <span class="index-number">[01]</span>
+            <span class="index-label">About</span>
+            <span class="index-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <li class="index-row fx" style="--i: 1">
           <a class="index-link" href="#activity">
-            <span class="index-number">[1]</span>
-            <span class="index-leader" aria-hidden="true"></span>
+            <span class="index-number">[02]</span>
             <span class="index-label">Activity</span>
+            <span class="index-arrow" aria-hidden="true">↗</span>
           </a>
         </li>
       </ol>
@@ -59,11 +68,12 @@
 
   <main class="content">
     <section class="intro reveal" id="about">
+      <h2 class="section-label"><span>[01]</span> About</h2>
       <p class="intro-text">I'm Rocco, an electrical and computer engineering student at the University of Colorado Boulder. I direct firmware and software for the CU Boulder Robotics Team, and I've interned at Thorlabs and MDScripts.</p>
     </section>
 
     <section class="block reveal" id="activity">
-      <h2 class="block-title"><span class="block-number">[1]</span> Activity</h2>
+      <h2 class="block-title"><span class="block-number">[02]</span> Activity</h2>
       <p class="block-lede" id="contrib-lede">Loading the last year from GitHub…</p>
       <div class="graph-wrap">
         <div class="graph" id="contrib-graph" role="img" aria-label="GitHub contribution graph for the last year"></div>
