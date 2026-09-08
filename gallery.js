@@ -4,13 +4,27 @@
   var viewer = document.querySelector('.photo-viewer');
   if (typeof viewer.showModal !== 'function') return;
   var image = viewer.querySelector('.viewer-image');
+  var video = viewer.querySelector('.viewer-video');
   var count = viewer.querySelector('.viewer-count');
   var current = 0;
 
   function show(index) {
     current = (index + photos.length) % photos.length;
-    image.src = photos[current].href;
-    image.alt = photos[current].querySelector('img').alt;
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    var isVideo = photos[current].hasAttribute('data-video');
+    var thumbnail = photos[current].querySelector('img');
+    image.hidden = isVideo;
+    video.hidden = !isVideo;
+    if (isVideo) {
+      video.poster = thumbnail.src;
+      video.src = photos[current].href;
+      video.setAttribute('aria-label', thumbnail.alt);
+    } else {
+      image.src = photos[current].href;
+      image.alt = thumbnail.alt;
+    }
     count.textContent = (current + 1) + ' / ' + photos.length;
   }
 
@@ -28,6 +42,7 @@
   viewer.querySelector('.viewer-prev').addEventListener('click', function () { show(current - 1); });
   viewer.querySelector('.viewer-next').addEventListener('click', function () { show(current + 1); });
   viewer.addEventListener('keydown', function (event) {
+    if (event.target === video) return;
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault();
       show(current + (event.key === 'ArrowRight' ? 1 : -1));
@@ -36,5 +51,5 @@
   viewer.addEventListener('click', function (event) {
     if (event.target === viewer) viewer.close();
   });
-  viewer.addEventListener('close', function () { document.body.classList.remove('viewer-open'); });
+  viewer.addEventListener('close', function () { video.pause(); document.body.classList.remove('viewer-open'); });
 })();
