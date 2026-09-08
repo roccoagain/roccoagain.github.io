@@ -737,3 +737,5 @@ html:not(.js) .backdrop-img { opacity: 1; transform: none; }
 .video-play { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #111b; color: white; font-size: 20px; padding-left: 3px; }
 .viewer-video { max-width: 100%; max-height: 100%; }
 .viewer-image[hidden], .viewer-video[hidden] { display: none; }
+
+.strip-right { margin-left: auto; }
