@@ -647,3 +647,81 @@ html:not(.js) .backdrop-img { opacity: 1; transform: none; }
   .row-leader { display: none; }
   .row-when { margin-left: auto; padding-left: 8px; }
 }
+
+/* A small spread of prints, with the whole photograph kept in frame. */
+.photo-gallery {
+  width: min(100%, 880px);
+  margin: 8px auto clamp(56px, 8vw, 96px);
+  padding: 24px 20px 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 20px;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+.photo-print {
+  display: block;
+  flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 0;
+  padding: 7px;
+  background: #fff;
+  box-shadow: 0 3px 8px #28251d14, 0 16px 30px #28251d17;
+  transform: rotate(var(--tilt));
+  transition: transform .45s var(--ease-out), box-shadow .45s var(--ease-out);
+  cursor: zoom-in;
+}
+.photo-print img { display: block; width: 100%; height: auto; }
+.js .photo-gallery:not(.is-visible) .photo-print { transform: translateY(28px) rotate(0); }
+.photo-gallery.is-visible .photo-print { transition-delay: calc(var(--order) * 80ms); }
+.photo-print:focus-visible { z-index: 2; transform: translateY(-12px) rotate(0); }
+@media (hover: hover) {
+  .photo-print:hover {
+    z-index: 2;
+    transform: translateY(-12px) rotate(0) scale(1.035);
+    box-shadow: 0 4px 10px #28251d14, 0 24px 40px #28251d26;
+  }
+}
+.viewer-open { overflow: hidden; }
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 64px 24px 80px;
+  border: 0;
+  background: rgba(17, 18, 19, .96);
+  color: var(--ink);
+}
+.photo-viewer[open] { display: flex; align-items: center; justify-content: center; animation: viewer-in .25s ease-out; }
+.photo-viewer::backdrop { background: #111; }
+.viewer-image { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.photo-viewer button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #ffffff40;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font: 24px var(--sans);
+  cursor: pointer;
+}
+.photo-viewer button:hover { background: #ffffff18; }
+.photo-viewer button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.viewer-close { position: absolute; right: 20px; top: 14px; }
+.viewer-controls { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.viewer-count { font: 13px var(--serif); min-width: 48px; text-align: center; }
+@keyframes viewer-in { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 600px) {
+  .photo-gallery { padding: 16px 4px 24px; margin-top: 0; gap: 24px 16px; }
+  .photo-gallery .photo-print { flex-basis: calc((100% - 16px) / 2); }
+  .photo-print { padding: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-print, .photo-viewer[open] { animation: none; transition: none; }
+  .js .photo-gallery:not(.is-visible) .photo-print { transform: rotate(var(--tilt)); }
+}
