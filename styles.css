@@ -725,3 +725,10 @@ html:not(.js) .backdrop-img { opacity: 1; transform: none; }
   .photo-print, .photo-viewer[open] { animation: none; transition: none; }
   .js .photo-gallery:not(.is-visible) .photo-print { transform: rotate(var(--tilt)); }
 }
+
+/* Keep the photo spread within its numbered section. */
+#gallery .photo-gallery { margin-bottom: 0; }
+@media (max-width: 600px) {
+  .index { flex-wrap: wrap; gap: 8px 24px; }
+  .index-row { flex: 1 1 120px; }
+}
