@@ -122,24 +122,26 @@
   };
 
   function renderActivity(events) {
-    // Collapse runs of pushes to the same repo into one row.
+    // Collapse runs of the same action on the same repo into one row.
     var rows = [];
     events.forEach(function (e) {
       if (!VERBS[e.type]) return;
+      var verb = VERBS[e.type](e);
       var last = rows[rows.length - 1];
-      if (last && e.type === 'PushEvent' && last.type === 'PushEvent' && last.repo === e.repo.name) {
-        last.pushes++;
+      if (last && last.verb === verb && last.repo === e.repo.name) {
+        last.times++;
         return;
       }
-      rows.push({ type: e.type, repo: e.repo.name, at: e.created_at, pushes: 1, verb: VERBS[e.type](e) });
+      rows.push({ type: e.type, repo: e.repo.name, at: e.created_at, times: 1, verb: verb });
     });
 
     var list = document.getElementById('activity-list');
     list.textContent = '';
     rows.slice(0, 8).forEach(function (row) {
-      var verb = row.pushes > 1 ? 'Pushed ' + row.pushes + ' times to' : row.verb;
-      var name = el('span', 'row-name', verb + ' ');
+      var pushes = row.type === 'PushEvent' && row.times > 1;
+      var name = el('span', 'row-name', (pushes ? 'Pushed ' + row.times + ' times to' : row.verb) + ' ');
       name.appendChild(externalLink('https://github.com/' + row.repo, row.repo));
+      if (row.times > 1 && !pushes) name.appendChild(el('span', 'row-count', '×' + row.times));
       var li = el('li');
       li.appendChild(name);
       li.appendChild(el('span', 'row-leader'));

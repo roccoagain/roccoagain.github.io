@@ -13,11 +13,13 @@
   --ink-faint: rgba(247, 247, 245, 0.55);
   --shadow: 0 2px 18px rgba(10, 20, 35, 0.35);
 
-  --paper: #faf9f5;
-  --paper-line: #e3e1d9;
-  --text: #141413;
-  --text-soft: #5e5d59;
-  --text-faint: #74736e;
+  /* Paper is cooled toward the dusk sky in the hero photo so the two halves read as one place. */
+  --paper: #f4f5f4;
+  --paper-line: #dcdfe2;
+  --text: #16191f;
+  --text-soft: #535864;
+  --text-faint: #6d727d;
+  --slate: #3a4763;
 
   --strip: 52px;
   --bar: 56px;
@@ -35,6 +37,10 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(58, 71, 99, 0.2);
 }
 
 body {
@@ -75,7 +81,7 @@ a:focus-visible {
   height: var(--bar);
   padding: 0 var(--gutter);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   font-size: 12.5px;
   letter-spacing: 0.005em;
@@ -96,6 +102,23 @@ a:focus-visible {
   backdrop-filter: blur(10px);
   border-bottom-color: var(--paper-line);
   text-shadow: none;
+}
+
+.topbar-name {
+  margin-right: auto;
+  font-family: var(--display);
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+
+.topbar.is-light .topbar-name {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  color: var(--text);
 }
 
 .topbar-links {
@@ -263,11 +286,25 @@ html:not(.js) .backdrop-img {
   height: var(--strip);
   padding: 0 var(--gutter);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  gap: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   font-size: 12.5px;
   color: var(--ink-soft);
+}
+
+.strip-place {
+  margin: 0;
+  display: flex;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.strip-clock {
+  font-family: var(--display);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
 
 .strip a {
@@ -311,18 +348,6 @@ html:not(.js) .backdrop-img {
   padding-bottom: var(--section-pad);
 }
 
-.section-label {
-  margin: 0 0 28px;
-  font-family: var(--display);
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.section-label span {
-  color: var(--text-faint);
-  margin-right: 12px;
-}
-
 .intro-text {
   max-width: 760px;
   margin: 0;
@@ -332,6 +357,23 @@ html:not(.js) .backdrop-img {
 
 .intro-text + .intro-text {
   margin-top: 1em;
+}
+
+.intro-text a {
+  color: var(--slate);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: rgba(58, 71, 99, 0.35);
+  transition: text-decoration-color 0.25s var(--ease-out);
+}
+
+.intro-text a:hover {
+  text-decoration-color: currentColor;
+}
+
+.intro .block-title {
+  margin-bottom: clamp(20px, 3vh, 28px);
 }
 
 .block {
@@ -403,8 +445,10 @@ html:not(.js) .backdrop-img {
   display: block;
   flex: 0 0 calc((100% - 40px) / 3);
   min-width: 0;
-  padding: 7px;
+  padding: 7px 7px 0;
   background: #fff;
+  color: var(--text-soft);
+  text-decoration: none;
   box-shadow: 0 3px 8px #28251d14, 0 16px 30px #28251d17;
   transform: rotate(var(--tilt));
   transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
@@ -417,15 +461,41 @@ html:not(.js) .backdrop-img {
   height: auto;
 }
 
+.print-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 9px 2px 10px;
+  font-family: var(--display);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.print-year {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
 .js .photo-gallery:not(.is-visible) .photo-print {
   transform: translateY(28px) rotate(0);
 }
 
-.photo-gallery.is-visible .photo-print {
-  transition-delay: calc(var(--order) * 80ms);
+/* The staggered entrance is an animation, not a transition delay, so it
+   doesn't linger and slow down later hovers. */
+.js .photo-gallery.is-visible .photo-print {
+  animation: print-in 0.45s var(--ease-out) backwards;
+  animation-delay: calc(var(--order) * 80ms);
+}
+
+@keyframes print-in {
+  from { transform: translateY(28px) rotate(0); }
 }
 
 .photo-print:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 4px;
   z-index: 2;
   transform: translateY(-12px) rotate(0);
 }
@@ -444,7 +514,7 @@ html:not(.js) .backdrop-img {
 
 .video-play {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 16px);
   left: 50%;
   transform: translate(-50%, -50%);
   display: grid;
@@ -549,6 +619,17 @@ html:not(.js) .backdrop-img {
 }
 
 /* ── activity ── */
+/* Cells grow to fill the column, down to 9px before the graph scrolls. */
+#activity {
+  container-type: inline-size;
+}
+
+.graph-wrap,
+.graph-legend {
+  --gap: 3px;
+  --cell: max(9px, min(14px, calc((100cqw - 52 * var(--gap)) / 53)));
+}
+
 .graph-wrap {
   overflow-x: auto;
   padding-bottom: 4px;
@@ -556,8 +637,8 @@ html:not(.js) .backdrop-img {
 
 .graph-months {
   display: grid;
-  grid-template-columns: repeat(53, 9px);
-  gap: 2px;
+  grid-template-columns: repeat(53, var(--cell));
+  gap: var(--gap);
   width: max-content;
   margin-bottom: 4px;
   font-size: 11px;
@@ -566,31 +647,30 @@ html:not(.js) .backdrop-img {
 
 .graph {
   display: grid;
-  grid-template-rows: repeat(7, 9px);
+  grid-template-rows: repeat(7, var(--cell));
   grid-auto-flow: column;
-  grid-auto-columns: 9px;
-  gap: 2px;
+  grid-auto-columns: var(--cell);
+  gap: var(--gap);
   width: max-content;
-  min-height: 75px;
+  min-height: calc(7 * var(--cell) + 6 * var(--gap));
 }
 
 .cell {
   display: block;
-  width: 9px;
-  height: 9px;
+  width: var(--cell, 9px);
+  height: var(--cell, 9px);
   border-radius: 2px;
-  background: var(--text);
-  opacity: 0.06;
+  background: rgba(58, 71, 99, 0.08);
 }
 
 .cell.pad { visibility: hidden; }
-.cell.l1 { opacity: 0.25; }
-.cell.l2 { opacity: 0.45; }
-.cell.l3 { opacity: 0.7; }
-.cell.l4 { opacity: 1; }
+.cell.l1 { background: #b3bccc; }
+.cell.l2 { background: #7e8ca6; }
+.cell.l3 { background: #56647f; }
+.cell.l4 { background: var(--slate); }
 
 .graph-legend {
-  max-width: 583px; /* 53 columns × 11px, so it lines up with the graph */
+  max-width: calc(53 * var(--cell) + 52 * var(--gap)); /* lines up with the graph */
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -642,6 +722,12 @@ html:not(.js) .backdrop-img {
 
 .row-leader::before {
   content: "..........................................................................................";
+}
+
+.row-count {
+  margin-left: 6px;
+  font-size: 12.5px;
+  color: var(--text-faint);
 }
 
 .row-when {
@@ -746,6 +832,7 @@ html:not(.js) .backdrop-img {
     transition: none !important;
   }
   .photo-print,
+  .js .photo-gallery.is-visible .photo-print,
   .photo-viewer[open] {
     animation: none;
     transition: none;
@@ -757,6 +844,9 @@ html:not(.js) .backdrop-img {
 
 /* ── small screens ── */
 @media (max-width: 720px) {
+  .topbar-name {
+    display: none;
+  }
   .topbar-links {
     width: 100%;
     justify-content: space-between;

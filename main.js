@@ -15,6 +15,18 @@
     setTimeout(ready, 2500);
   }
 
+  // Local time in Boulder, ticking once a minute.
+  var clock = document.getElementById('clock');
+  try {
+    var format = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    var tick = function () {
+      clock.textContent = format.format(new Date());
+      setTimeout(tick, 60000 - Date.now() % 60000);
+    };
+    tick();
+    clock.hidden = false;
+  } catch (e) {}
+
   if (!('IntersectionObserver' in window)) {
     reveals.forEach(function (el) { el.classList.add('is-visible'); });
     return;
