@@ -217,7 +217,7 @@ html:not(.js) .backdrop-img {
 /* ── hero index ── */
 .index {
   list-style: none;
-  width: min(100%, 460px);
+  width: min(100%, 600px);
   display: flex;
   gap: 32px;
   margin: 40px 0 0;
@@ -709,6 +709,18 @@ html:not(.js) .backdrop-img {
 .row-name {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+/* artifact rows carry a full-width description under the name line */
+.rows .has-blurb {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.row-blurb {
+  flex-basis: 100%;
+  font-size: 13.5px;
+  color: var(--text-soft);
 }
 
 .row-leader {
