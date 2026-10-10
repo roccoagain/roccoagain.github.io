@@ -8,7 +8,7 @@
   <title>Rocco Antoniou</title>
   <link rel="preload" href="GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin />
   <script>document.documentElement.classList.add("js");</script>
-  <link rel="stylesheet" href="styles.css?v=14" />
+  <link rel="stylesheet" href="styles.css?v=15" />
 </head>
 
 <body>
@@ -54,8 +54,15 @@
           </a>
         </li>
         <li class="index-row fx" style="--i: 1">
-          <a class="index-link" href="#activity">
+          <a class="index-link" href="#artifacts">
             <span class="index-number">[03]</span>
+            <span class="index-label">Artifacts</span>
+            <span class="index-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <li class="index-row fx" style="--i: 1">
+          <a class="index-link" href="#activity">
+            <span class="index-number">[04]</span>
             <span class="index-label">Activity</span>
             <span class="index-arrow" aria-hidden="true">↗</span>
           </a>
@@ -125,8 +132,21 @@
       </div>
     </dialog>
 
+    <section class="block reveal" id="artifacts">
+      <h2 class="block-title"><span class="block-number">[03]</span> Artifacts</h2>
+      <p class="block-lede">Small, self-contained pages I've built. This list finds them on its own: any folder in the site's repo with a page in it shows up here.</p>
+      <ul class="rows" id="artifact-list">
+        <li class="has-blurb">
+          <span class="row-name"><a href="hn/">Hacker News Live</a></span>
+          <span class="row-leader"></span>
+          <span class="row-when">/hn</span>
+          <span class="row-blurb">A live, auto-refreshing reader for the Hacker News front page.</span>
+        </li>
+      </ul>
+    </section>
+
     <section class="block reveal" id="activity">
-      <h2 class="block-title"><span class="block-number">[03]</span> Activity</h2>
+      <h2 class="block-title"><span class="block-number">[04]</span> Activity</h2>
       <p class="block-lede" id="contrib-lede">Loading the last year from GitHub…</p>
       <div class="graph-wrap">
         <div class="graph" id="contrib-graph" role="img" aria-label="GitHub contribution graph for the last year"></div>
@@ -152,6 +172,7 @@
 
   <script src="main.js?v=2" defer></script>
   <script src="gallery.js?v=2" defer></script>
+  <script src="artifacts.js?v=1" defer></script>
   <script src="activity.js?v=2" defer></script>
 </body>
 </html>
