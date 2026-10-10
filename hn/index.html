@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hacker News Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f6f7f8; --surface: #ffffff; --fg: #16181c; --muted: #646a73; --faint: #e3e6ea;
+  --accent: #e8590c; --accent-soft: #fde8db; --read: #9aa0a8;
+  --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111316; --surface: #181b1f; --fg: #e9ebee; --muted: #959ba4; --faint: #262a30;
+    --accent: #ff8a3d; --accent-soft: #3a2416; --read: #6b717a; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.45 var(--font-body);
+  padding-inline: 16px; padding-block: 0 48px;
+}
+.wrap { max-width: 860px; margin: 0 auto; }
+
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 16px 12px; border-bottom: 1px solid var(--faint); display: grid; gap: 12px;
+}
+.brand { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mark { width: 26px; height: 26px; border-radius: 5px; background: var(--accent); color: #fff; display: grid; place-items: center; font: 700 15px var(--font-display); }
+h1 { margin: 0; font: 700 21px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.status { margin-left: auto; display: flex; align-items: center; gap: 10px; font: 12px var(--font-mono); color: var(--muted); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.dot.live { background: #2f9e44; }
+.dot.err { background: #e03131; }
+.iconbtn { font: 500 12px var(--font-mono); color: var(--fg); background: var(--surface); border: 1px solid var(--faint); border-radius: 6px; padding: 4px 9px; cursor: pointer; }
+.iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+nav.feeds { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+nav.feeds button {
+  font: 600 14px var(--font-display); color: var(--muted); background: none; border: 0;
+  padding: 6px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+}
+nav.feeds button[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
+nav.feeds button:hover { color: var(--fg); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--faint); border-radius: 8px; padding: 3px; gap: 2px; }
+.seg button { font: 500 13px var(--font-body); color: var(--muted); background: none; border: 0; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.seg button:hover { color: var(--fg); }
+.search { flex: 1 1 180px; min-width: 0; }
+.search input { width: 100%; font: 14px var(--font-body); color: var(--fg); background: var(--surface); border: 1px solid var(--faint); border-radius: 8px; padding: 7px 10px; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+ol.stories { list-style: none; margin: 0; padding: 0; }
+.story { border-bottom: 1px solid var(--faint); border-radius: 6px; }
+.row { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr) auto; gap: 4px 14px; padding: 14px 10px; align-items: start; }
+.story.sel { background: var(--surface); box-shadow: inset 3px 0 0 var(--accent); }
+.rank { font: 500 13px var(--font-mono); color: var(--muted); text-align: right; padding-top: 2px; font-variant-numeric: tabular-nums; }
+.body { min-width: 0; }
+.title { font: 600 16.5px/1.3 var(--font-display); color: var(--fg); text-decoration: none; overflow-wrap: anywhere; }
+.title:hover { color: var(--accent); }
+.site { font: 12.5px var(--font-mono); color: var(--muted); margin-left: 6px; white-space: nowrap; }
+.tag { display: inline-block; font: 600 10.5px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); border: 1px solid currentColor; border-radius: 4px; padding: 0 5px; margin-right: 6px; vertical-align: 2px; }
+.meta { margin-top: 5px; font: 12.5px var(--font-mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; font-variant-numeric: tabular-nums; }
+.meta a { color: inherit; text-decoration: none; }
+.meta a:hover { color: var(--fg); text-decoration: underline; }
+.pts strong { color: var(--fg); font-weight: 500; }
+.rate.hot { color: var(--accent); }
+.side { display: grid; justify-items: end; gap: 8px; padding-top: 2px; }
+.heat { width: 64px; height: 4px; background: var(--faint); border-radius: 2px; overflow: hidden; }
+.heat i { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+.cmt { font: 500 12.5px var(--font-mono); color: var(--fg); background: var(--surface); border: 1px solid var(--faint); border-radius: 6px; padding: 3px 8px; white-space: nowrap; cursor: pointer; font-variant-numeric: tabular-nums; }
+.cmt:hover, .cmt[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.story.read .title { color: var(--read); font-weight: 500; }
+.story.read .tag { color: var(--read); }
+
+/* comment threads */
+.thread { padding: 0 10px 16px calc(2.4rem + 24px); }
+.selftext { font-size: 14.5px; max-width: 68ch; margin-bottom: 12px; overflow-wrap: anywhere; }
+.thread-head { display: flex; gap: 12px; align-items: center; font: 12px var(--font-mono); color: var(--muted); margin-bottom: 8px; }
+.thread-head a { color: var(--accent); }
+.c { border-left: 2px solid var(--faint); padding: 6px 0 6px 12px; margin-top: 6px; }
+.c-meta { font: 12px var(--font-mono); color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.c-meta b { color: var(--fg); font-weight: 500; }
+.c-meta button { font: inherit; color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; }
+.c-meta button:hover { color: var(--accent); }
+.c-text { font-size: 14.5px; max-width: 68ch; margin-top: 3px; overflow-wrap: anywhere; }
+.c-text p, .selftext p { margin: 0.5em 0 0; }
+.c-text a, .selftext a { color: var(--accent); }
+.c-text pre, .selftext pre { overflow-x: auto; background: var(--surface); border: 1px solid var(--faint); border-radius: 6px; padding: 8px; font: 12.5px/1.4 var(--font-mono); }
+.c.collapsed > .c-text, .c.collapsed > .kids, .c.collapsed > .more { display: none; }
+.more { font: 12px var(--font-mono); color: var(--accent); background: none; border: 0; padding: 6px 0 0; cursor: pointer; }
+.loading { font: 12px var(--font-mono); color: var(--muted); padding: 6px 0; }
+
+.empty, .err-box { padding: 40px 10px; color: var(--muted); text-align: center; }
+.loadmore { display: block; margin: 18px auto 0; }
+.skel { height: 64px; border-bottom: 1px solid var(--faint); background: linear-gradient(90deg, transparent, var(--surface), transparent); background-size: 200% 100%; }
+@media (prefers-reduced-motion: no-preference) { .skel { animation: sh 1.2s linear infinite; } }
+@keyframes sh { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
+footer { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 18px; font: 12px var(--font-mono); color: var(--muted); }
+kbd { font: 11px var(--font-mono); border: 1px solid var(--faint); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--surface); color: var(--fg); }
+footer button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; }
+
+@media (max-width: 560px) {
+  .row { grid-template-columns: 1.6rem minmax(0, 1fr); }
+  .side { grid-column: 2; grid-auto-flow: column; justify-content: start; align-items: center; justify-items: start; }
+  .thread { padding-left: 10px; }
+  .status { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">Y</span>
+      <h1>Hacker News</h1>
+      <div class="status">
+        <span class="dot" id="dot"></span>
+        <span id="updated">Loading…</span>
+        <button class="iconbtn" id="refresh" type="button" title="Refresh (r)">Refresh</button>
+      </div>
+    </div>
+    <nav class="feeds" aria-label="Feed">
+      <button data-feed="top" aria-pressed="true">Top</button>
+      <button data-feed="new" aria-pressed="false">New</button>
+      <button data-feed="best" aria-pressed="false">Best</button>
+      <button data-feed="ask" aria-pressed="false">Ask</button>
+      <button data-feed="show" aria-pressed="false">Show</button>
+      <button data-feed="job" aria-pressed="false">Jobs</button>
+    </nav>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Sort">
+        <button data-sort="rank" aria-pressed="true">Ranked</button>
+        <button data-sort="rising" aria-pressed="false">Rising</button>
+        <button data-sort="points" aria-pressed="false">Points</button>
+        <button data-sort="comments" aria-pressed="false">Discussed</button>
+        <button data-sort="new" aria-pressed="false">Newest</button>
+      </div>
+      <div class="seg" role="group" aria-label="Show">
+        <button data-unread="false" aria-pressed="true">All</button>
+        <button data-unread="true" aria-pressed="false">Unread</button>
+      </div>
+      <label class="search"><input id="q" type="search" placeholder="Filter titles, sites, users" aria-label="Filter stories"></label>
+    </div>
+  </header>
+
+  <ol class="stories" id="list"></ol>
+  <button class="iconbtn loadmore" id="more" type="button" hidden>Load 30 more</button>
+
+  <footer>
+    <span><kbd>j</kbd>/<kbd>k</kbd> move</span>
+    <span><kbd>o</kbd> open</span>
+    <span><kbd>c</kbd> comments</span>
+    <span><kbd>r</kbd> refresh</span>
+    <span><kbd>1</kbd>–<kbd>6</kbd> feeds</span>
+    <span><kbd>/</kbd> search</span>
+    <span>Auto-refreshes every 2 min · Rising = points per hour</span>
+    <button id="clear-read" type="button">Mark all unread</button>
+  </footer>
+</div>
+
+<script>
+const API = "https://hacker-news.firebaseio.com/v0/";
+const HN = "https://news.ycombinator.com/";
+const PAGE = 30;
+const REFRESH_MS = 120000;
+const FEEDS = { top: "topstories", new: "newstories", best: "beststories", ask: "askstories", show: "showstories", job: "jobstories" };
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let readIds = new Set(store.get("hn-read", []));
+const saved = store.get("hn-view", {});
+const state = { feed: saved.feed || "top", sort: saved.sort || "rank", unread: !!saved.unread, q: "" };
+
+let ids = [];          // ranked ids for current feed
+let shown = PAGE;      // how many of them are loaded
+let stories = [];      // loaded items
+let visible = [];
+let sel = -1;
+let openThread = null; // story id with expanded comments
+let lastUpdated = 0;
+let loadToken = 0;
+const itemCache = new Map();
+
+const $ = id => document.getElementById(id);
+const $list = $("list"), $q = $("q");
+
+async function getJSON(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(r.status + " " + r.statusText);
+  return r.json();
+}
+async function item(id, fresh) {
+  if (!fresh && itemCache.has(id)) return itemCache.get(id);
+  const p = getJSON("item/" + id + ".json").catch(() => null);
+  itemCache.set(id, p);
+  return p;
+}
+
+function host(url) {
+  try {
+    const u = new URL(url);
+    let h = u.hostname.replace(/^www\./, "");
+    if (/^(github\.com|gitlab\.com|twitter\.com|x\.com|medium\.com)$/.test(h)) {
+      const seg = u.pathname.split("/").filter(Boolean)[0];
+      if (seg) h += "/" + seg;
+    }
+    return h;
+  } catch { return null; }
+}
+function ago(t) {
+  const s = Math.max(0, Date.now() / 1000 - t);
+  if (s < 3600) { const m = Math.max(1, Math.floor(s / 60)); return m + (m === 1 ? " minute ago" : " minutes ago"); }
+  if (s < 86400) { const h = Math.floor(s / 3600); return h + (h === 1 ? " hour ago" : " hours ago"); }
+  const d = Math.floor(s / 86400); return d + (d === 1 ? " day ago" : " days ago");
+}
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+// HN text fields are HTML; keep only HN's own small tag set.
+const ALLOWED = new Set(["P", "A", "I", "B", "PRE", "CODE", "BR"]);
+function safeHTML(html) {
+  const doc = new DOMParser().parseFromString("<div>" + (html || "") + "</div>", "text/html");
+  const root = doc.body.firstChild;
+  root.querySelectorAll("script,style,iframe,object,embed,img,svg,form").forEach(n => n.remove());
+  [...root.querySelectorAll("*")].reverse().forEach(n => {
+    if (!ALLOWED.has(n.tagName)) { n.replaceWith(...n.childNodes); return; }
+    const href = n.tagName === "A" ? n.getAttribute("href") : null;
+    [...n.attributes].forEach(a => n.removeAttribute(a.name));
+    if (href && /^https?:/i.test(href)) { n.setAttribute("href", href); n.setAttribute("target", "_blank"); n.setAttribute("rel", "noopener noreferrer"); }
+  });
+  const frag = document.createDocumentFragment();
+  [...root.childNodes].forEach(n => frag.append(n));
+  return frag;
+}
+
+function decorate(s, rank) {
+  s.rank = rank;
+  s.points = s.score || 0;
+  s.comments = s.descendants || 0;
+  s.hours = Math.max((Date.now() / 1000 - s.time) / 3600, 0.25);
+  s.rate = s.points / s.hours;
+  s.site = s.url ? host(s.url) : null;
+  s.link = s.url || HN + "item?id=" + s.id;
+  s.kind = /^Show HN:/.test(s.title) ? "show" : /^Ask HN:/.test(s.title) ? "ask" : s.type === "job" ? "job" : null;
+  s.cleanTitle = (s.title || "").replace(/^(Show|Ask) HN:\s*/, "");
+  return s;
+}
+
+async function loadFeed(keepScroll) {
+  const token = ++loadToken;
+  $("dot").className = "dot";
+  if (!keepScroll) { $list.replaceChildren(...Array.from({ length: 8 }, () => el("li", "skel"))); $("more").hidden = true; }
+  try {
+    const fresh = await getJSON(FEEDS[state.feed] + ".json");
+    if (token !== loadToken) return;
+    ids = fresh;
+    const slice = ids.slice(0, shown);
+    const items = await Promise.all(slice.map(id => item(id, true)));
+    if (token !== loadToken) return;
+    stories = items.map((s, i) => s && !s.deleted && !s.dead ? decorate(s, i + 1) : null).filter(Boolean);
+    lastUpdated = Date.now();
+    $("dot").className = "dot live";
+    render();
+  } catch (e) {
+    if (token !== loadToken) return;
+    $("dot").className = "dot err";
+    $("updated").textContent = "Offline";
+    if (!stories.length) {
+      $list.replaceChildren(el("li", "err-box", "Couldn't reach the Hacker News API (" + e.message + "). Check your connection and press Refresh."));
+    }
+  }
+}
+
+async function loadMore() {
+  const start = shown;
+  shown += PAGE;
+  $("more").disabled = true;
+  const items = await Promise.all(ids.slice(start, shown).map(id => item(id)));
+  stories = stories.concat(items.map((s, i) => s && !s.deleted && !s.dead ? decorate(s, start + i + 1) : null).filter(Boolean));
+  $("more").disabled = false;
+  render();
+}
+
+function markRead(id) { readIds.add(id); if (readIds.size > 3000) readIds = new Set([...readIds].slice(-2000)); store.set("hn-read", [...readIds]); }
+
+function render() {
+  const q = state.q.trim().toLowerCase();
+  visible = stories.filter(s => {
+    if (state.unread && readIds.has(s.id)) return false;
+    if (q && !(s.title + " " + (s.site || "") + " " + s.by).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const cmp = {
+    rank: (a, b) => a.rank - b.rank,
+    rising: (a, b) => b.rate - a.rate,
+    points: (a, b) => b.points - a.points,
+    comments: (a, b) => b.comments - a.comments,
+    new: (a, b) => b.time - a.time
+  }[state.sort];
+  visible.sort(cmp);
+  const maxPts = Math.max(1, ...stories.map(s => s.points));
+  const maxRate = Math.max(0.01, ...stories.map(s => s.rate));
+
+  $list.replaceChildren();
+  if (!visible.length) {
+    $list.append(el("li", "empty", state.unread ? "You've read everything loaded so far." : "No stories match that filter."));
+  }
+  visible.forEach((s, i) => {
+    const li = el("li", "story");
+    li.dataset.id = s.id;
+    if (readIds.has(s.id)) li.classList.add("read");
+    if (i === sel) li.classList.add("sel");
+    const row = el("div", "row");
+    row.append(el("span", "rank", s.rank + "."));
+
+    const body = el("div", "body");
+    const t = el("a", "title");
+    t.href = s.link; t.target = "_blank"; t.rel = "noopener";
+    if (s.kind) t.append(el("span", "tag", { show: "Show", ask: "Ask", job: "Job" }[s.kind]));
+    t.append(document.createTextNode(s.cleanTitle));
+    t.addEventListener("click", () => { markRead(s.id); li.classList.add("read"); });
+    body.append(t);
+    if (s.site) body.append(el("span", "site", s.site));
+
+    const meta = el("div", "meta");
+    if (s.type !== "job") {
+      const pts = el("span", "pts"); pts.append(el("strong", null, s.points), document.createTextNode(s.points === 1 ? " point" : " points"));
+      meta.append(pts);
+    }
+    if (s.by) {
+      const by = el("a", null, s.by); by.href = HN + "user?id=" + encodeURIComponent(s.by); by.target = "_blank"; by.rel = "noopener";
+      const w = el("span", null, "by "); w.append(by); meta.append(w);
+    }
+    const age = el("a", null, ago(s.time)); age.href = HN + "item?id=" + s.id; age.target = "_blank"; age.rel = "noopener";
+    meta.append(age);
+    if (s.type !== "job") {
+      const rate = el("span", "rate", (s.rate >= 10 ? Math.round(s.rate) : s.rate.toFixed(1)) + " pts/hr");
+      if (s.rate >= maxRate * 0.5 && s.points >= 10) rate.classList.add("hot");
+      meta.append(rate);
+    }
+    body.append(meta);
+    row.append(body);
+
+    const side = el("div", "side");
+    if (s.type !== "job") {
+      const heat = el("div", "heat"); heat.title = s.points + " of " + maxPts + " points (max loaded)";
+      const bar = el("i"); bar.style.width = Math.max(3, Math.round(100 * Math.sqrt(s.points / maxPts))) + "%";
+      heat.append(bar); side.append(heat);
+    }
+    if (s.type !== "job" || s.text) {
+      const c = el("button", "cmt", s.comments ? s.comments + " comments" : (s.text ? "read" : "discuss"));
+      c.type = "button";
+      c.setAttribute("aria-expanded", openThread === s.id);
+      c.addEventListener("click", () => toggleThread(s, li, c));
+      side.append(c);
+    }
+    row.append(side);
+    row.addEventListener("click", e => { if (e.target.closest("a,button")) return; sel = i; highlight(); });
+    li.append(row);
+    if (openThread === s.id) li.append(buildThread(s));
+    $list.append(li);
+  });
+  $("more").hidden = shown >= ids.length;
+  updateStamp();
+}
+
+function toggleThread(s, li, btn) {
+  markRead(s.id); li.classList.add("read");
+  const existing = li.querySelector(".thread");
+  if (existing) { existing.remove(); openThread = null; btn.setAttribute("aria-expanded", "false"); return; }
+  const prev = openThread && $list.querySelector('[data-id="' + openThread + '"] .thread');
+  if (prev) { prev.closest(".story").querySelector(".cmt").setAttribute("aria-expanded", "false"); prev.remove(); }
+  openThread = s.id;
+  btn.setAttribute("aria-expanded", "true");
+  li.append(buildThread(s));
+}
+
+function buildThread(s) {
+  const wrap = el("div", "thread");
+  if (s.text) { const st = el("div", "selftext"); st.append(safeHTML(s.text)); wrap.append(st); }
+  const head = el("div", "thread-head");
+  head.append(el("span", null, s.comments + (s.comments === 1 ? " comment" : " comments")));
+  const a = el("a", null, "Open on HN"); a.href = HN + "item?id=" + s.id; a.target = "_blank"; a.rel = "noopener";
+  head.append(a);
+  wrap.append(head);
+  const kids = el("div", "kids");
+  wrap.append(kids);
+  if (s.kids && s.kids.length) renderKids(kids, s.kids, 0);
+  return wrap;
+}
+
+const BATCH = 15;
+async function renderKids(container, kidIds, depth, from = 0) {
+  const loading = el("div", "loading", "Loading comments…");
+  container.append(loading);
+  const batch = kidIds.slice(from, from + BATCH);
+  const items = await Promise.all(batch.map(id => item(id)));
+  loading.remove();
+  items.forEach(c => {
+    if (!c || c.deleted || c.dead || !c.text) return;
+    container.append(buildComment(c, depth));
+  });
+  if (from + BATCH < kidIds.length) {
+    const more = el("button", "more", "Show " + Math.min(BATCH, kidIds.length - from - BATCH) + " more");
+    more.type = "button";
+    more.addEventListener("click", () => { more.remove(); renderKids(container, kidIds, depth, from + BATCH); });
+    container.append(more);
+  }
+}
+
+function countDesc(c) { return c.kids ? c.kids.length : 0; }
+
+function buildComment(c, depth) {
+  const box = el("div", "c");
+  const meta = el("div", "c-meta");
+  const who = el("b", null, c.by || "[deleted]");
+  meta.append(who, el("span", null, ago(c.time)));
+  const tog = el("button", null, "[–]"); tog.type = "button"; tog.title = "Collapse";
+  tog.addEventListener("click", () => { const col = box.classList.toggle("collapsed"); tog.textContent = col ? "[+" + (countDesc(c)) + "]" : "[–]"; });
+  meta.append(tog);
+  box.append(meta);
+  const text = el("div", "c-text"); text.append(safeHTML(c.text)); box.append(text);
+  if (c.kids && c.kids.length) {
+    const kids = el("div", "kids");
+    box.append(kids);
+    if (depth < 2) renderKids(kids, c.kids, depth + 1);
+    else {
+      const more = el("button", "more", c.kids.length + (c.kids.length === 1 ? " reply" : " replies"));
+      more.type = "button";
+      more.addEventListener("click", () => { more.remove(); renderKids(kids, c.kids, depth + 1); });
+      box.append(more);
+    }
+  }
+  return box;
+}
+
+function updateStamp() {
+  if (!lastUpdated) return;
+  const s = Math.round((Date.now() - lastUpdated) / 1000);
+  $("updated").textContent = s < 10 ? "Updated just now" : s < 60 ? "Updated " + s + "s ago" : "Updated " + Math.floor(s / 60) + "m ago";
+}
+
+function highlight(scroll) {
+  [...$list.querySelectorAll(".story")].forEach((li, i) => li.classList.toggle("sel", i === sel));
+  const cur = $list.querySelectorAll(".story")[sel];
+  if (scroll && cur) cur.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+
+function syncButtons() {
+  document.querySelectorAll("[data-feed]").forEach(b => b.setAttribute("aria-pressed", b.dataset.feed === state.feed));
+  document.querySelectorAll("[data-sort]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sort === state.sort));
+  document.querySelectorAll("[data-unread]").forEach(b => b.setAttribute("aria-pressed", String(state.unread) === b.dataset.unread));
+}
+function saveView() { store.set("hn-view", { feed: state.feed, sort: state.sort, unread: state.unread }); }
+
+function setFeed(f) {
+  if (state.feed === f) return;
+  state.feed = f; shown = PAGE; stories = []; sel = -1; openThread = null;
+  saveView(); syncButtons(); loadFeed();
+}
+
+document.querySelectorAll("[data-feed]").forEach(b => b.addEventListener("click", () => setFeed(b.dataset.feed)));
+document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => { state.sort = b.dataset.sort; sel = -1; saveView(); syncButtons(); render(); }));
+document.querySelectorAll("[data-unread]").forEach(b => b.addEventListener("click", () => { state.unread = b.dataset.unread === "true"; sel = -1; saveView(); syncButtons(); render(); }));
+$q.addEventListener("input", () => { state.q = $q.value; sel = -1; render(); });
+$("refresh").addEventListener("click", () => loadFeed(true));
+$("more").addEventListener("click", loadMore);
+$("clear-read").addEventListener("click", () => { readIds = new Set(); store.set("hn-read", []); render(); });
+
+document.addEventListener("keydown", e => {
+  if (e.target === $q) { if (e.key === "Escape") $q.blur(); return; }
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const rows = $list.querySelectorAll(".story");
+  const cur = rows[sel];
+  const feedKeys = ["top", "new", "best", "ask", "show", "job"];
+  if (e.key === "j") { sel = Math.min(rows.length - 1, sel + 1); highlight(true); }
+  else if (e.key === "k") { sel = Math.max(0, sel - 1); highlight(true); }
+  else if (e.key === "/") { e.preventDefault(); $q.focus(); }
+  else if (e.key === "o" && cur) cur.querySelector(".title").click();
+  else if (e.key === "c" && cur) { const b = cur.querySelector(".cmt"); if (b) { b.click(); highlight(true); } }
+  else if (e.key === "r") loadFeed(true);
+  else if (/^[1-6]$/.test(e.key)) setFeed(feedKeys[+e.key - 1]);
+});
+
+// Auto-refresh while the tab is visible, but don't reshuffle under an open thread.
+setInterval(() => { if (!document.hidden && !openThread) loadFeed(true); }, REFRESH_MS);
+setInterval(updateStamp, 10000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && Date.now() - lastUpdated > REFRESH_MS && !openThread) loadFeed(true);
+});
+
+syncButtons();
+loadFeed();
+</script>
+</body>
+</html>
