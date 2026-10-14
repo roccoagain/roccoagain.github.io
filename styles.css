@@ -7,7 +7,7 @@
 }
 
 :root {
-  --sky: #4b4a35;
+  --sky: #5d6a85;
   --ink: #f7f7f5;
   --ink-soft: rgba(247, 247, 245, 0.78);
   --ink-faint: rgba(247, 247, 245, 0.55);
@@ -190,15 +190,15 @@ html:not(.js) .backdrop-img {
   background:
     linear-gradient(
       180deg,
-      rgba(8, 14, 22, 0.32) 0%,
-      rgba(8, 14, 22, 0) 18%,
-      rgba(8, 14, 22, 0) 45%,
-      rgba(8, 14, 22, 0.62) 100%
+      rgba(14, 20, 34, 0.42) 0%,
+      rgba(14, 20, 34, 0) 20%,
+      rgba(14, 20, 34, 0) 40%,
+      rgba(14, 20, 34, 0.7) 100%
     ),
     radial-gradient(
       90% 70% at 0% 100%,
-      rgba(8, 14, 22, 0.45) 0%,
-      rgba(8, 14, 22, 0) 70%
+      rgba(14, 20, 34, 0.5) 0%,
+      rgba(14, 20, 34, 0) 70%
     );
 }
 
@@ -333,11 +333,6 @@ html:not(.js) .backdrop-img {
 .strip .strip-credit:hover,
 .strip .strip-credit:focus-visible {
   color: var(--ink);
-}
-
-/* If the painting fails to load, the old photo stands in and the credit goes away. */
-.no-art .hero-credit {
-  display: none;
 }
 
 .strip-credit cite {
@@ -961,6 +956,10 @@ html:not(.js) .backdrop-img {
 @media (max-width: 600px) {
   .strip .strip-credit {
     display: none;
+  }
+  /* keep the magpie on the gate in frame on narrow screens */
+  .backdrop-img {
+    object-position: 22% 40%;
   }
   .hero {
     min-height: 88svh;
