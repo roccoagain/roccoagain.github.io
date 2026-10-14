@@ -7,7 +7,7 @@
 }
 
 :root {
-  --sky: #3d4453;
+  --sky: #4b4a35;
   --ink: #f7f7f5;
   --ink-soft: rgba(247, 247, 245, 0.78);
   --ink-faint: rgba(247, 247, 245, 0.55);
@@ -208,32 +208,6 @@ html:not(.js) .backdrop-img {
   width: 100%;
 }
 
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 22px;
-  font-size: 12.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.kicker::before {
-  content: "";
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-}
-
-.tagline {
-  max-width: 34ch;
-  margin: 22px 0 0;
-  font-size: clamp(17px, 1.7vw, 22px);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
 .title {
   margin: 0;
   font-family: var(--display);
@@ -347,6 +321,27 @@ html:not(.js) .backdrop-img {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+.strip .strip-credit {
+  display: inline;
+  margin-left: auto;
+  color: var(--ink-faint);
+  transition: color 0.25s var(--ease-out);
+}
+
+.strip .strip-credit:hover,
+.strip .strip-credit:focus-visible {
+  color: var(--ink);
+}
+
+/* If the painting fails to load, the old photo stands in and the credit goes away. */
+.no-art .hero-credit {
+  display: none;
+}
+
+.strip-credit cite {
+  font-style: italic;
 }
 
 .strip a svg {
@@ -964,6 +959,9 @@ html:not(.js) .backdrop-img {
 }
 
 @media (max-width: 600px) {
+  .strip .strip-credit {
+    display: none;
+  }
   .hero {
     min-height: 88svh;
     padding-bottom: calc(var(--strip) + 48px);
