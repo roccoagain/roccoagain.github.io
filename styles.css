@@ -186,17 +186,19 @@ html:not(.js) .backdrop-img {
 .backdrop-shade {
   position: absolute;
   inset: 0;
+  /* Darken only where the type sits (bottom-left) so the photo stays bright elsewhere. */
   background:
     linear-gradient(
       180deg,
-      rgba(8, 14, 22, 0.05) 0%,
-      rgba(8, 14, 22, 0.18) 55%,
-      rgba(8, 14, 22, 0.55) 100%
+      rgba(8, 14, 22, 0.32) 0%,
+      rgba(8, 14, 22, 0) 18%,
+      rgba(8, 14, 22, 0) 45%,
+      rgba(8, 14, 22, 0.62) 100%
     ),
     radial-gradient(
-      120% 90% at 50% 40%,
-      rgba(0, 0, 0, 0) 45%,
-      rgba(8, 14, 22, 0.28) 100%
+      90% 70% at 0% 100%,
+      rgba(8, 14, 22, 0.45) 0%,
+      rgba(8, 14, 22, 0) 70%
     );
 }
 
@@ -204,6 +206,32 @@ html:not(.js) .backdrop-img {
   position: relative;
   z-index: 1;
   width: 100%;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.kicker::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+
+.tagline {
+  max-width: 34ch;
+  margin: 22px 0 0;
+  font-size: clamp(17px, 1.7vw, 22px);
+  line-height: 1.45;
+  color: var(--ink-soft);
 }
 
 .title {
@@ -267,6 +295,12 @@ html:not(.js) .backdrop-img {
   margin-left: auto;
   font-family: var(--sans);
   color: var(--ink-soft);
+  transition: transform 0.3s var(--ease-out);
+}
+
+.index-link:hover .index-arrow,
+.index-link:focus-visible .index-arrow {
+  transform: translate(2px, -2px);
 }
 
 @media (hover: hover) {
@@ -747,6 +781,70 @@ html:not(.js) .backdrop-img {
   font-size: 12.5px;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
+}
+
+/* artifacts read as cards: each one is a whole page you can open */
+#artifact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+#artifact-list li,
+#artifact-list li:first-child {
+  position: relative;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--paper-line);
+  border-radius: 10px;
+  background: #fff;
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+}
+
+#artifact-list .row-leader {
+  display: none;
+}
+
+#artifact-list .row-name {
+  flex: 1 1 auto;
+  font-family: var(--display);
+  font-size: 17px;
+}
+
+#artifact-list .row-when {
+  margin-left: auto;
+}
+
+#artifact-list .row-blurb {
+  margin-top: 6px;
+}
+
+/* The whole card is the link's hit area. */
+#artifact-list a {
+  border-bottom: 0;
+}
+
+#artifact-list a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+#artifact-list a:focus-visible {
+  outline: none;
+}
+
+#artifact-list li:focus-within {
+  outline: 2px solid var(--slate);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  #artifact-list li:hover {
+    transform: translateY(-3px);
+    border-color: #c9ced6;
+    box-shadow: 0 2px 6px #28251d0f, 0 14px 28px #28251d14;
+  }
 }
 
 /* ── footer ── */
