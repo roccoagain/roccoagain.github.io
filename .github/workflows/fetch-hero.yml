@@ -1,0 +1,44 @@
+# Temporary: fetches the hero painting into the repo (the dev container can't reach Wikimedia). Removed before merge.
+name: Fetch hero image
+on:
+  push:
+    branches: [claude/project-thread-k7v15r]
+    paths: [.github/workflows/fetch-hero.yml]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Diagnose the old AIC hotlink
+        run: |
+          curl -sS -o /dev/null -w 'AIC no referer: %{http_code} %{content_type}\n' "https://www.artic.edu/iiif/2/7a23ad22-2044-6d7d-6315-9b101dadc559/full/1686,/0/default.jpg" || true
+          curl -sS -o /dev/null -w 'AIC with referer: %{http_code} %{content_type}\n' -e "https://roccoagain.github.io/" "https://www.artic.edu/iiif/2/7a23ad22-2044-6d7d-6315-9b101dadc559/full/1686,/0/default.jpg" || true
+          curl -sS -o /dev/null -w 'AIC 843 with referer: %{http_code} %{content_type}\n' -e "https://roccoagain.github.io/" "https://www.artic.edu/iiif/2/7a23ad22-2044-6d7d-6315-9b101dadc559/full/843,/0/default.jpg" || true
+      - name: Download The Magpie from Wikimedia Commons
+        run: |
+          UA="roccoagain.github.io hero fetch (https://github.com/roccoagain/roccoagain.github.io)"
+          curl -sS -A "$UA" "https://commons.wikimedia.org/w/api.php?action=query&titles=File:Claude_Monet_-_The_Magpie_-_Google_Art_Project.jpg&prop=imageinfo&iiprop=url|size|extmetadata&format=json" -o meta.json
+          python3 - <<'PY'
+          import json
+          d = json.load(open('meta.json'))
+          info = next(iter(d['query']['pages'].values()))['imageinfo'][0]
+          em = info['extmetadata']
+          print('url', info['url'], info['width'], info['height'])
+          for k in ('LicenseShortName', 'License', 'Copyrighted', 'Credit', 'DateTimeOriginal'):
+              print(k, '=', em.get(k, {}).get('value'))
+          open('url.txt', 'w').write(info['url'])
+          PY
+          curl -sSfL -A "$UA" "$(cat url.txt)" -o original.jpg
+          identify original.jpg
+          convert original.jpg -resize 2400x -strip -interlace Plane -quality 82 images/hero-magpie-2400.jpg
+          convert original.jpg -resize 1600x -strip -interlace Plane -quality 82 images/hero-magpie-1600.jpg
+          ls -la images/hero-magpie-*
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add images/hero-magpie-*.jpg
+          git commit -m "Add Monet's The Magpie as hero image (public domain, via Wikimedia Commons)"
+          git push
