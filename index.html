@@ -9,8 +9,12 @@
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <title>Rocco Antoniou</title>
   <link rel="preload" href="GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin />
-  <script>document.documentElement.classList.add("js");</script>
-  <link rel="stylesheet" href="styles.css?v=20" />
+  <script>
+    document.documentElement.classList.add("js");
+    // A reload starts at the top of the page rather than where you left off.
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  </script>
+  <link rel="stylesheet" href="styles.css?v=21" />
 </head>
 
 <body>
@@ -159,7 +163,7 @@
     </footer>
   </main>
 
-  <script src="main.js?v=3" defer></script>
+  <script src="main.js?v=4" defer></script>
   <script src="gallery.js?v=2" defer></script>
   <script src="artifacts.js?v=1" defer></script>
   <script src="activity.js?v=2" defer></script>

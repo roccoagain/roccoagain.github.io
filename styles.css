@@ -978,3 +978,8 @@ a:focus-visible {
     font-size: 11.5px;
   }
 }
+
+/* Sections take focus when an in-page link scrolls to them; no ring for that. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
