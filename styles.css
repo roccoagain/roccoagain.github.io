@@ -7,7 +7,7 @@
 }
 
 :root {
-  --sky: #5d6a85;
+  --sky: #dfe3ea;
   --ink: #f7f7f5;
   --ink-soft: rgba(247, 247, 245, 0.78);
   --ink-faint: rgba(247, 247, 245, 0.55);
@@ -69,6 +69,15 @@ a:focus-visible {
 
 .skip-link:focus {
   transform: none;
+}
+
+/* The hero painting is a bright snow scene, so the type over it is dark. */
+.hero,
+.topbar {
+  --ink: #15181e;
+  --ink-soft: rgba(21, 24, 30, 0.8);
+  --ink-faint: rgba(21, 24, 30, 0.6);
+  --shadow: 0 0 18px rgba(244, 245, 244, 0.6);
 }
 
 /* ── top bar ── */
@@ -186,19 +195,19 @@ html:not(.js) .backdrop-img {
 .backdrop-shade {
   position: absolute;
   inset: 0;
-  /* Darken only where the type sits (bottom-left) so the photo stays bright elsewhere. */
+  /* Lighten only where the type sits (top bar, bottom-left) so the painting stays vivid elsewhere. */
   background:
     linear-gradient(
       180deg,
-      rgba(14, 20, 34, 0.42) 0%,
-      rgba(14, 20, 34, 0) 20%,
-      rgba(14, 20, 34, 0) 40%,
-      rgba(14, 20, 34, 0.7) 100%
+      rgba(244, 245, 244, 0.45) 0%,
+      rgba(244, 245, 244, 0) 18%,
+      rgba(244, 245, 244, 0) 42%,
+      rgba(244, 245, 244, 0.6) 100%
     ),
     radial-gradient(
       90% 70% at 0% 100%,
-      rgba(14, 20, 34, 0.5) 0%,
-      rgba(14, 20, 34, 0) 70%
+      rgba(244, 245, 244, 0.55) 0%,
+      rgba(244, 245, 244, 0) 70%
     );
 }
 
@@ -238,7 +247,7 @@ html:not(.js) .backdrop-img {
   align-items: baseline;
   gap: 12px;
   padding: 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-top: 1px solid rgba(21, 24, 30, 0.3);
   white-space: nowrap;
   color: inherit;
   text-decoration: none;
@@ -297,7 +306,7 @@ html:not(.js) .backdrop-img {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid rgba(21, 24, 30, 0.18);
   font-size: 12.5px;
   color: var(--ink-soft);
 }
