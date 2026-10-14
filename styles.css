@@ -7,19 +7,29 @@
 }
 
 :root {
-  --sky: #dfe3ea;
-  --ink: #f7f7f5;
-  --ink-soft: rgba(247, 247, 245, 0.78);
-  --ink-faint: rgba(247, 247, 245, 0.55);
-  --shadow: 0 2px 18px rgba(10, 20, 35, 0.35);
+  color-scheme: light dark;
 
-  /* Paper is cooled toward the dusk sky in the hero photo so the two halves read as one place. */
-  --paper: #f4f5f4;
-  --paper-line: #dcdfe2;
+  /* The page follows the system theme: white in light mode, black in dark mode. */
+  --paper: #fff;
+  --paper-line: #e3e5e8;
+  --line-strong: #c9ced6;
+  --card: #fff;
+  --bar-bg: rgba(255, 255, 255, 0.85);
   --text: #16191f;
   --text-soft: #535864;
   --text-faint: #6d727d;
   --slate: #3a4763;
+  --select: rgba(58, 71, 99, 0.2);
+  --print-shadow: 0 3px 8px #28251d14, 0 16px 30px #28251d17;
+  --print-shadow-hover: 0 4px 10px #28251d14, 0 24px 40px #28251d26;
+  --cell-0: rgba(58, 71, 99, 0.08);
+  --cell-1: #b3bccc;
+  --cell-2: #7e8ca6;
+  --cell-3: #56647f;
+  --cell-4: #3a4763;
+
+  /* the gallery viewer is always dark */
+  --ink: #f7f7f5;
 
   --strip: 52px;
   --bar: 56px;
@@ -31,6 +41,28 @@
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #000;
+    --paper-line: #26282d;
+    --line-strong: #3a3d44;
+    --card: #131417;
+    --bar-bg: rgba(0, 0, 0, 0.8);
+    --text: #f2f3f5;
+    --text-soft: #aeb2ba;
+    --text-faint: #8c919a;
+    --slate: #a9b8d6;
+    --select: rgba(169, 184, 214, 0.3);
+    --print-shadow: 0 3px 8px #0006, 0 16px 30px #0008;
+    --print-shadow-hover: 0 4px 10px #0006, 0 24px 40px #000a;
+    --cell-0: rgba(169, 184, 214, 0.1);
+    --cell-1: #2c3546;
+    --cell-2: #435273;
+    --cell-3: #6577a0;
+    --cell-4: #a9b8d6;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -40,7 +72,7 @@ html {
 }
 
 ::selection {
-  background: rgba(58, 71, 99, 0.2);
+  background: var(--select);
 }
 
 body {
@@ -71,15 +103,6 @@ a:focus-visible {
   transform: none;
 }
 
-/* The hero painting is a bright snow scene, so the type over it is dark. */
-.hero,
-.topbar {
-  --ink: #15181e;
-  --ink-soft: rgba(21, 24, 30, 0.8);
-  --ink-faint: rgba(21, 24, 30, 0.6);
-  --shadow: 0 0 18px rgba(244, 245, 244, 0.6);
-}
-
 /* ── top bar ── */
 .topbar {
   position: fixed;
@@ -94,23 +117,19 @@ a:focus-visible {
   align-items: center;
   font-size: 12.5px;
   letter-spacing: 0.005em;
-  color: var(--ink-soft);
-  text-shadow: var(--shadow);
+  color: var(--text-soft);
   border-bottom: 1px solid transparent;
   transition:
     color 0.35s var(--ease-out),
     background-color 0.35s var(--ease-out),
-    border-color 0.35s var(--ease-out),
-    text-shadow 0.35s var(--ease-out);
+    border-color 0.35s var(--ease-out);
 }
 
 .topbar.is-light {
-  color: var(--text-soft);
-  background: rgba(250, 249, 245, 0.85);
+  background: var(--bar-bg);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom-color: var(--paper-line);
-  text-shadow: none;
 }
 
 .topbar-name {
@@ -160,55 +179,9 @@ a:focus-visible {
   justify-content: flex-end;
   align-items: center;
   padding: calc(var(--bar) + 80px) var(--gutter) calc(var(--strip) + 80px);
-  color: var(--ink);
-  background: var(--sky);
-  text-shadow: var(--shadow);
+  color: var(--text);
+  background: var(--paper);
   overflow: hidden;
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.backdrop-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 40%;
-  opacity: 0;
-  transform: scale(1.06);
-  transition:
-    opacity 1.4s var(--ease-out),
-    transform 6s var(--ease-out);
-}
-
-.is-ready .backdrop-img,
-html:not(.js) .backdrop-img {
-  opacity: 1;
-  transform: none;
-}
-
-.backdrop-shade {
-  position: absolute;
-  inset: 0;
-  /* Lighten only where the type sits (top bar, bottom-left) so the painting stays vivid elsewhere. */
-  background:
-    linear-gradient(
-      180deg,
-      rgba(244, 245, 244, 0.45) 0%,
-      rgba(244, 245, 244, 0) 18%,
-      rgba(244, 245, 244, 0) 42%,
-      rgba(244, 245, 244, 0.6) 100%
-    ),
-    radial-gradient(
-      90% 70% at 0% 100%,
-      rgba(244, 245, 244, 0.55) 0%,
-      rgba(244, 245, 244, 0) 70%
-    );
 }
 
 .hero-inner {
@@ -247,7 +220,7 @@ html:not(.js) .backdrop-img {
   align-items: baseline;
   gap: 12px;
   padding: 8px 0;
-  border-top: 1px solid rgba(21, 24, 30, 0.3);
+  border-top: 1px solid var(--line-strong);
   white-space: nowrap;
   color: inherit;
   text-decoration: none;
@@ -261,7 +234,7 @@ html:not(.js) .backdrop-img {
   font-family: var(--sans);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  color: var(--ink-faint);
+  color: var(--text-faint);
 }
 
 .index-label {
@@ -271,13 +244,13 @@ html:not(.js) .backdrop-img {
 
 .index-link:hover .index-label,
 .index-link:focus-visible .index-label {
-  border-bottom-color: var(--ink-soft);
+  border-bottom-color: var(--text-soft);
 }
 
 .index-arrow {
   margin-left: auto;
   font-family: var(--sans);
-  color: var(--ink-soft);
+  color: var(--text-soft);
   transition: transform 0.3s var(--ease-out);
 }
 
@@ -306,9 +279,9 @@ html:not(.js) .backdrop-img {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  border-top: 1px solid rgba(21, 24, 30, 0.18);
+  border-top: 1px solid var(--paper-line);
   font-size: 12.5px;
-  color: var(--ink-soft);
+  color: var(--text-soft);
 }
 
 .strip-place {
@@ -321,7 +294,7 @@ html:not(.js) .backdrop-img {
 .strip-clock {
   font-family: var(--display);
   font-variant-numeric: tabular-nums;
-  color: var(--ink);
+  color: var(--text);
 }
 
 .strip a {
@@ -330,22 +303,6 @@ html:not(.js) .backdrop-img {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.strip .strip-credit {
-  display: inline;
-  margin-left: auto;
-  color: var(--ink-faint);
-  transition: color 0.25s var(--ease-out);
-}
-
-.strip .strip-credit:hover,
-.strip .strip-credit:focus-visible {
-  color: var(--ink);
-}
-
-.strip-credit cite {
-  font-style: italic;
 }
 
 .strip a svg {
@@ -397,7 +354,7 @@ html:not(.js) .backdrop-img {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: rgba(58, 71, 99, 0.35);
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   transition: text-decoration-color 0.25s var(--ease-out);
 }
 
@@ -479,10 +436,10 @@ html:not(.js) .backdrop-img {
   flex: 0 0 calc((100% - 40px) / 3);
   min-width: 0;
   padding: 7px 7px 0;
-  background: #fff;
+  background: var(--card);
   color: var(--text-soft);
   text-decoration: none;
-  box-shadow: 0 3px 8px #28251d14, 0 16px 30px #28251d17;
+  box-shadow: var(--print-shadow);
   transform: rotate(var(--tilt));
   transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
   cursor: zoom-in;
@@ -537,7 +494,7 @@ html:not(.js) .backdrop-img {
   .photo-print:hover {
     z-index: 2;
     transform: translateY(-12px) rotate(0) scale(1.035);
-    box-shadow: 0 4px 10px #28251d14, 0 24px 40px #28251d26;
+    box-shadow: var(--print-shadow-hover);
   }
 }
 
@@ -693,14 +650,14 @@ html:not(.js) .backdrop-img {
   width: var(--cell, 9px);
   height: var(--cell, 9px);
   border-radius: 2px;
-  background: rgba(58, 71, 99, 0.08);
+  background: var(--cell-0);
 }
 
 .cell.pad { visibility: hidden; }
-.cell.l1 { background: #b3bccc; }
-.cell.l2 { background: #7e8ca6; }
-.cell.l3 { background: #56647f; }
-.cell.l4 { background: var(--slate); }
+.cell.l1 { background: var(--cell-1); }
+.cell.l2 { background: var(--cell-2); }
+.cell.l3 { background: var(--cell-3); }
+.cell.l4 { background: var(--cell-4); }
 
 .graph-legend {
   max-width: calc(53 * var(--cell) + 52 * var(--gap)); /* lines up with the graph */
@@ -795,7 +752,7 @@ html:not(.js) .backdrop-img {
   padding: 18px 20px 20px;
   border: 1px solid var(--paper-line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--card);
   transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
 }
 
@@ -841,8 +798,8 @@ html:not(.js) .backdrop-img {
 @media (hover: hover) {
   #artifact-list li:hover {
     transform: translateY(-3px);
-    border-color: #c9ced6;
-    box-shadow: 0 2px 6px #28251d0f, 0 14px 28px #28251d14;
+    border-color: var(--line-strong);
+    box-shadow: var(--print-shadow);
   }
 }
 
@@ -931,7 +888,6 @@ html:not(.js) .backdrop-img {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .fx,
-  .backdrop-img,
   .reveal,
   .strip a svg {
     opacity: 1 !important;
@@ -963,13 +919,6 @@ html:not(.js) .backdrop-img {
 }
 
 @media (max-width: 600px) {
-  .strip .strip-credit {
-    display: none;
-  }
-  /* keep the magpie on the gate in frame on narrow screens */
-  .backdrop-img {
-    object-position: 22% 40%;
-  }
   .hero {
     min-height: 88svh;
     padding-bottom: calc(var(--strip) + 48px);

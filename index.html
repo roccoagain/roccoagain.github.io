@@ -4,11 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Rocco Antoniou — Electrical & Computer Engineering student at the University of Colorado Boulder." />
-  <meta name="theme-color" content="#dfe3ea" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <title>Rocco Antoniou</title>
   <link rel="preload" href="GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin />
   <script>document.documentElement.classList.add("js");</script>
-  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="styles.css?v=20" />
 </head>
 
 <body>
@@ -22,20 +24,6 @@
   </header>
 
   <section class="hero" id="top">
-    <div class="backdrop" aria-hidden="true">
-      <!-- Claude Monet, The Magpie (1868–69), Musée d'Orsay. Public domain; scan from Wikimedia Commons (Google Art Project). -->
-      <img
-        class="backdrop-img"
-        src="images/hero-magpie-2400.jpg"
-        srcset="images/hero-magpie-1600.jpg 1600w, images/hero-magpie-2400.jpg 2400w"
-        sizes="100vw"
-        alt=""
-        fetchpriority="high"
-        decoding="async"
-      />
-      <div class="backdrop-shade"></div>
-    </div>
-
     <div class="hero-inner">
       <h1 class="title fx" style="--i: 0">Rocco Antoniou</h1>
 
@@ -76,7 +64,6 @@
         <span>ECE at CU Boulder</span>
         <time class="strip-clock" id="clock" hidden></time>
       </p>
-      <a class="strip-credit" href="https://commons.wikimedia.org/wiki/File:Claude_Monet_-_The_Magpie_-_Google_Art_Project.jpg" target="_blank" rel="noopener noreferrer">Claude Monet, <cite>The Magpie</cite>, 1868–69 ↗</a>
       <a href="#about" aria-label="Scroll to content">
         Scroll
         <svg width="10" height="12" viewBox="0 0 10 12" fill="none" aria-hidden="true"><path d="M5 1v10M1 7l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -167,13 +154,12 @@
       <span class="colophon-links">
         <a href="https://www.linkedin.com/in/roccoantoniou" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="https://github.com/roccoagain" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://commons.wikimedia.org/wiki/File:Claude_Monet_-_The_Magpie_-_Google_Art_Project.jpg" target="_blank" rel="noopener noreferrer">Hero: Claude Monet, The Magpie (Musée d'Orsay, public domain)</a>
         <span>Rocco Antoniou · 2026</span>
       </span>
     </footer>
   </main>
 
-  <script src="main.js?v=2" defer></script>
+  <script src="main.js?v=3" defer></script>
   <script src="gallery.js?v=2" defer></script>
   <script src="artifacts.js?v=1" defer></script>
   <script src="activity.js?v=2" defer></script>

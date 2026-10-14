@@ -1,19 +1,11 @@
 (function () {
   var root = document.documentElement;
-  var backdrop = document.querySelector('.backdrop-img');
   var topbar = document.querySelector('.topbar');
   var hero = document.querySelector('.hero');
   var reveals = document.querySelectorAll('.reveal');
 
-  // Play the hero entrance once the photo is ready (or after a short timeout).
-  function ready() { root.classList.add('is-ready'); }
-  if (backdrop.complete && backdrop.naturalWidth > 0) {
-    ready();
-  } else {
-    backdrop.addEventListener('load', ready, { once: true });
-    backdrop.addEventListener('error', ready, { once: true });
-    setTimeout(ready, 2500);
-  }
+  // Play the hero entrance.
+  root.classList.add('is-ready');
 
   // Local time in Boulder, ticking once a minute.
   var clock = document.getElementById('clock');
