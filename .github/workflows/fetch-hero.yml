@@ -31,9 +31,15 @@ jobs:
           open('url.txt', 'w').write(info['url'])
           PY
           curl -sSfL -A "$UA" "$(cat url.txt)" -o original.jpg
-          identify original.jpg
-          convert original.jpg -resize 2400x -strip -interlace Plane -quality 82 images/hero-magpie-2400.jpg
-          convert original.jpg -resize 1600x -strip -interlace Plane -quality 82 images/hero-magpie-1600.jpg
+          python3 -m pip install -q pillow
+          python3 - <<'PY'
+          from PIL import Image
+          im = Image.open('original.jpg').convert('RGB')
+          print('original', im.size)
+          for w in (2400, 1600):
+              im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(
+                  f'images/hero-magpie-{w}.jpg', 'JPEG', quality=82, optimize=True, progressive=True)
+          PY
           ls -la images/hero-magpie-*
       - name: Commit
         run: |
