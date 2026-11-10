@@ -158,14 +158,14 @@ a:focus-visible {
 
 .topbar a {
   color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.25s var(--ease-out);
+  text-decoration: underline 1px transparent;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.25s var(--ease-out);
 }
 
 .topbar a:hover,
 .topbar a:focus-visible {
-  border-bottom-color: currentColor;
+  text-decoration-color: currentColor;
   outline: none;
 }
 
@@ -404,9 +404,9 @@ a:focus-visible {
 .block-lede a,
 .rows a {
   color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--paper-line);
-  transition: border-color 0.25s var(--ease-out);
+  text-decoration: underline 1px var(--paper-line);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.25s var(--ease-out);
 }
 
 .rows a {
@@ -415,7 +415,7 @@ a:focus-visible {
 
 .block-lede a:hover,
 .rows a:hover {
-  border-bottom-color: currentColor;
+  text-decoration-color: currentColor;
 }
 
 /* ── gallery ── */
@@ -519,10 +519,6 @@ a:focus-visible {
 }
 
 /* ── gallery viewer ── */
-.viewer-open {
-  overflow: hidden;
-}
-
 .photo-viewer {
   position: fixed;
   inset: 0;
@@ -544,8 +540,15 @@ a:focus-visible {
   animation: fx-fade-in 0.25s ease-out;
 }
 
+/* Keep scroll gestures from reaching the page behind the open viewer. */
+.photo-viewer:modal {
+  overscroll-behavior: contain;
+}
+
 .photo-viewer::backdrop {
   background: #111;
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .viewer-image,
@@ -822,12 +825,12 @@ a:focus-visible {
 
 .colophon a {
   color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
+  text-decoration: underline 1px transparent;
+  text-underline-offset: 0.25em;
 }
 
 .colophon a:hover {
-  border-bottom-color: currentColor;
+  text-decoration-color: currentColor;
 }
 
 /* ── entrance effects ── */

@@ -35,7 +35,6 @@
       event.preventDefault();
       show(index);
       viewer.showModal();
-      document.body.classList.add('viewer-open');
     });
   });
   viewer.querySelector('.viewer-close').addEventListener('click', function () { viewer.close(); });
@@ -48,8 +47,11 @@
       show(current + (event.key === 'ArrowRight' ? 1 : -1));
     }
   });
+  // The viewer fills the screen, so its ::backdrop is never clickable and
+  // closedby="any" can't help: a click on the empty space around the photo
+  // lands on the dialog itself, and that closes it.
   viewer.addEventListener('click', function (event) {
     if (event.target === viewer) viewer.close();
   });
-  viewer.addEventListener('close', function () { video.pause(); document.body.classList.remove('viewer-open'); });
+  viewer.addEventListener('close', function () { video.pause(); });
 })();
