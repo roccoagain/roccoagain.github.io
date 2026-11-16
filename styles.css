@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "Geist Pixel";
+  font-family: "Geist";
   font-style: normal;
-  font-weight: 400;
-  src: url("GeistPixel-Square.woff2") format("woff2");
+  font-weight: 100 900;
+  src: url("Geist-Variable.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -38,8 +38,8 @@
   --gutter: clamp(24px, 5vw, 80px);
   --measure: 880px;
   --section-pad: clamp(40px, 7vh, 72px);
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --display: "Geist Pixel", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --display: var(--sans);
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -220,6 +220,7 @@ a:focus-visible {
   font-weight: 400;
   font-size: clamp(38px, 7.8vw, 112px);
   line-height: 1;
+  letter-spacing: -0.035em;
 }
 
 /* ── hero index ── */
@@ -300,25 +301,12 @@ a:focus-visible {
   height: var(--strip);
   padding: 0 var(--gutter);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 16px;
   border-top: 1px solid var(--paper-line);
   font-size: 12.5px;
   color: var(--text-soft);
-}
-
-.strip-place {
-  margin: 0;
-  display: flex;
-  gap: 14px;
-  white-space: nowrap;
-}
-
-.strip-clock {
-  font-family: var(--display);
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
 }
 
 .strip a {
@@ -401,6 +389,7 @@ a:focus-visible {
   font-weight: 400;
   font-size: clamp(30px, 4vw, 38px);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .block-number {
