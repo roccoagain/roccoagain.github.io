@@ -43,6 +43,9 @@
             <span class="index-arrow" aria-hidden="true">↗</span>
           </a>
         </li>
+        <!-- Artifacts is hidden while it's empty. To bring it back, uncomment this
+             link, the #artifacts section and the artifacts.js script tag below,
+             and renumber Activity to [04] here and in its section heading.
         <li class="index-row fx" style="--i: 1">
           <a class="index-link" href="#artifacts">
             <span class="index-number">[03]</span>
@@ -50,9 +53,10 @@
             <span class="index-arrow" aria-hidden="true">↗</span>
           </a>
         </li>
+        -->
         <li class="index-row fx" style="--i: 1">
           <a class="index-link" href="#activity">
-            <span class="index-number">[04]</span>
+            <span class="index-number">[03]</span>
             <span class="index-label">Activity</span>
             <span class="index-arrow" aria-hidden="true">↗</span>
           </a>
@@ -138,6 +142,7 @@
       </div>
     </dialog>
 
+    <!-- Artifacts section, hidden while empty (see the note in the contents list).
     <section class="block reveal" id="artifacts">
       <h2 class="block-title"><span class="block-number">[03]</span> Artifacts</h2>
       <p class="block-lede">Small, self-contained pages I've built. This list finds them on its own: any folder in the site's repo with a page in it shows up here.</p>
@@ -145,9 +150,10 @@
         <li><span class="row-blurb">Nothing here right now. New pages show up on their own.</span></li>
       </ul>
     </section>
+    -->
 
     <section class="block reveal" id="activity">
-      <h2 class="block-title"><span class="block-number">[04]</span> Activity</h2>
+      <h2 class="block-title"><span class="block-number">[03]</span> Activity</h2>
       <p class="block-lede" id="contrib-lede">Loading the last year from GitHub…</p>
       <div class="graph-wrap">
         <div class="graph" id="contrib-graph" role="img" aria-label="GitHub contribution graph for the last year"></div>
@@ -174,7 +180,7 @@
   <script src="hero-shader.js?v=1" defer></script>
   <script src="main.js?v=3" defer></script>
   <script src="gallery.js?v=3" defer></script>
-  <script src="artifacts.js?v=1" defer></script>
+  <!-- <script src="artifacts.js?v=1" defer></script> (Artifacts hidden while empty) -->
   <script src="activity.js?v=2" defer></script>
 </body>
 </html>
