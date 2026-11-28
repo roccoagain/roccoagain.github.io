@@ -70,10 +70,25 @@
     var offset = parseDay(days[0].date).getDay();
     for (var p = 0; p < offset; p++) graph.appendChild(el('i', 'cell pad'));
 
+    // Shade by quartile among active days rather than GitHub's levels, which
+    // scale linearly to the busiest day and let one outlier dim everything else.
+    var active = days.map(function (d) { return d.count; })
+      .filter(function (c) { return c > 0; })
+      .sort(function (a, b) { return a - b; });
+    var cuts = [0.25, 0.5, 0.75].map(function (q) {
+      return active[Math.floor(q * (active.length - 1))];
+    });
+    function level(count) {
+      if (!count) return 0;
+      var l = 1;
+      cuts.forEach(function (c) { if (count > c) l++; });
+      return l;
+    }
+
     var lastMonth = -1;
     days.forEach(function (d, i) {
       var date = parseDay(d.date);
-      var cell = el('i', 'cell l' + Math.min(4, d.level));
+      var cell = el('i', 'cell l' + level(d.count));
       cell.title = d.count + (d.count === 1 ? ' contribution' : ' contributions') + ' on ' + formatDay(date, 'short');
       graph.appendChild(cell);
 
